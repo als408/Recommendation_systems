@@ -7,7 +7,13 @@ authors = [
     { name = "Mkrr", email = "mkrajevsky@gmail.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "gdown>=5.2.0",
+    "numpy>=2.1.0",
+    "pandas>=2.2.0",
+    "scipy>=1.14.0",
+    "torch>=2.6.0",
+]
 
 [project.scripts]
 recommendationsystems = "recommendationsystems:main"

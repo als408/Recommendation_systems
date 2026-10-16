@@ -51,8 +51,28 @@ df_test.csv
   @ala
   @zuza
   
-## SASRC
-  source: https://github.com/kang205/SASRec
+## SASRec
+
+Źródło architektury: https://github.com/kang205/SASRec
+
+Implementacja PyTorch znajduje się w `src/recommendationsystems/sasrec.py`.
+Trening i ewaluację (z taką samą definicją Precision@K i Recall@K jak dla
+MCRS w notebooku) można uruchomić poleceniem:
+
+```bash
+uv run python main.py --epochs 10 -k 10
+```
+
+Model korzysta wyłącznie z chronologicznych sekwencji ze zbioru treningowego.
+Podczas rekomendowania odfiltrowuje produkty widziane w treningu, a trafienia
+porównuje ze zbiorem testowym dla użytkowników obecnych w obu podziałach.
+
+Wynik dla `K=10`, 10 epok i ziarna losowego 42 (44 316 użytkowników):
+
+```text
+Precision@10: 0.0259
+Recall@10:    0.0616
+```
   
   @michał
 
