@@ -1,3 +1,4 @@
+
 """A compact PyTorch implementation of SASRec for implicit-feedback data."""
 
 from __future__ import annotations
