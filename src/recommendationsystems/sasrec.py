@@ -151,6 +151,10 @@ class SASRecRecommender:
         batch_size: int = 512,
     ) -> dict[Hashable, list]:
         """Generate recommendations in batches (substantially faster for evaluation)."""
+        if k <= 0:
+            raise ValueError("k must be positive")
+        if batch_size <= 0:
+            raise ValueError("batch_size must be positive")
         valid_users = [user for user in users if self.user_sequences.get(user)]
         recommendations: dict[Hashable, list] = {}
         self.model.eval()
@@ -172,7 +176,10 @@ class SASRecRecommender:
                 count = min(k, scores.shape[1])
                 top_indices = torch.topk(scores, count, dim=1).indices.add(1).cpu().tolist()
             for user, indices in zip(batch_users, top_indices, strict=True):
-                recommendations[user] = [self.index_to_item[index] for index in indices]
+                seen = set(self.user_sequences[user]) if filter_seen else set()
+                recommendations[user] = [
+                    self.index_to_item[index] for index in indices if index not in seen
+                ]
         return recommendations
 
 
@@ -264,8 +271,11 @@ def precision_recall_at_k(
     test: pd.DataFrame,
     users: Iterable[Hashable] | None = None,
     k: int = 10,
+    filter_seen: bool = True,
 ) -> tuple[float, float, int]:
     """Macro Precision@K and Recall@K, matching the existing notebook metrics."""
+    if k <= 0:
+        raise ValueError("k must be positive")
     actual_by_user = test.groupby("user")["item"].apply(set).to_dict()
     evaluation_users = (
         list(users)
@@ -274,7 +284,7 @@ def precision_recall_at_k(
     )
     precisions: list[float] = []
     recalls: list[float] = []
-    predictions = recommender.recommend_many(evaluation_users, k=k)
+    predictions = recommender.recommend_many(evaluation_users, k=k, filter_seen=filter_seen)
     for user in evaluation_users:
         actual = actual_by_user.get(user, set())
         if not actual:

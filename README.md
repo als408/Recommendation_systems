@@ -80,3 +80,21 @@ Recall@10:    0.0616
 
 ## Metrics and summary 
   
+
+## Porównanie filtrowania
+
+Notebook `rekomendacje.ipynb` porównuje MCRS, SASRec i baseline w dwóch
+wariantach: `filter_seen=True` wyklucza ogłoszenia widziane w treningu,
+a `filter_seen=False` dopuszcza ich ponowną rekomendację. Oba warianty
+korzystają z tych samych użytkowników i zbioru testowego. Zbiór trafnych
+ogłoszeń pozostaje niezmieniony; Precision@10 zawsze dzieli liczbę trafień
+przez 10, także gdy dostępnych rekomendacji jest mniej.
+
+SASRec trenuje się raz, a domyślnie ocenia w obu wariantach:
+
+```bash
+uv run python main.py --epochs 10 -k 10 --filter-seen both
+# Pojedynczy wariant: --filter-seen yes albo --filter-seen no
+```
+
+Wyniki podane wcześniej w README dotyczą wariantu z filtrowaniem.
