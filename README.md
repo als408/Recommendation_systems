@@ -98,3 +98,22 @@ uv run python main.py --epochs 10 -k 10 --filter-seen both
 ```
 
 Wyniki podane wcześniej w README dotyczą wariantu z filtrowaniem.
+
+## Pomiary i zapis eksperymentów
+
+Uruchom notebook od początku. Każdy przebieg tworzy osobny katalog
+`results/<czas-UTC>/`. `metrics.csv` zapisuje wyniki po każdym wariancie,
+w tym Precision@10, Recall@10, czas przygotowania/treningu, czas ewaluacji,
+średnią i medianę czasu pojedynczej predykcji oraz liczebności danych.
+`hardware.json` zapisuje środowisko i RAM, `dataset.json` rozmiar danych,
+a `sasrec_losses.csv` straty treningowe.
+
+Predykcja jest mierzona po rozgrzewce na maksymalnie 100 użytkownikach,
+jako osobne wywołania. Ewaluacja SASRec używa batchy 512, a MCRS i baseline
+pojedynczych wywołań; kolumna `evaluation_mode` wskazuje tę różnicę.
+Czas treningu SASRec obejmuje przygotowanie sekwencji i modelu. MCRS obejmuje
+przygotowanie macierzy i historii oraz popularności do uzupełniania wyników.
+Wspólne wczytanie CSV i pobieranie danych nie wchodzą do tych czasów.
+Oba warianty filtrowania mają ten sam czas treningu, ponieważ korzystają
+z tego samego wytrenowanego modelu. Rozmiary dotyczą wczytanych CSV;
+procent próbki względem danych źródłowych należy opisać osobno.
