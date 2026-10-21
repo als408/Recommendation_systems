@@ -24,10 +24,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--learning-rate", type=float, default=1e-3)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("-k", type=int, default=10)
-    parser.add_argument(
-        "--filter-seen", choices=("both", "yes", "no"), default="both",
-        help="Evaluate with seen-item filtering, without it, or both (default)",
-    )
     return parser.parse_args()
 
 
@@ -48,15 +44,12 @@ def main() -> None:
         seed=args.seed,
     )
     users = set(train["user"]).intersection(test["user"])
-    modes = [True, False] if args.filter_seen == "both" else [args.filter_seen == "yes"]
-    for filter_seen in modes:
-        precision, recall, count = precision_recall_at_k(
-            recommender, test, users=users, k=args.k, filter_seen=filter_seen
-        )
-        label = "filtered" if filter_seen else "unfiltered"
-        print(f"\n--- SASRec / {label} ({count} users) ---")
-        print(f"Precision@{args.k}: {precision:.4f}")
-        print(f"Recall@{args.k}:    {recall:.4f}")
+    precision, recall, count = precision_recall_at_k(
+        recommender, test, users=users, k=args.k
+    )
+    print(f"\n--- SASRec ({count} users) ---")
+    print(f"Precision@{args.k}: {precision:.4f}")
+    print(f"Recall@{args.k}:    {recall:.4f}")
 
 
 if __name__ == "__main__":
